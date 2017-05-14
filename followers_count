@@ -1,0 +1,82 @@
+<style>
+#container {
+  margin: 20px;
+  width: 800px;
+  height: 800px;
+  margin-top: -200px;
+}
+
+.colored{
+	color: #FFFFFF;
+}
+
+</style>
+
+<div style="position:absolute" id="container"></div>
+
+<link href="https://fonts.googleapis.com/css?family=Nunito:700" rel="stylesheet">
+<script src="https://kimmobrunfeldt.github.io/progressbar.js/bundle.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="http://aishek.github.io/jquery-animateNumber/javascripts/jquery.color.js"></script>
+<script src="http://aishek.github.io/jquery-animateNumber/javascripts/jquery.animateNumber.js"></script>
+
+<div style="width:800px;margin-top: 200px;margin-left: 20px;">
+<div style="width:500px;margin: 0 auto;">
+<div id="follower_count" align=center style="font-family:'Nunito', sans-serif;width:470px;font-size:130px;font-style:normal;font-variant:normal;font-weight:bold;linecolor:#FFFFFF;">
+<div class="colored" id="cnt" style="display:inline-block;">0</div>
+<div class="colored" id="middle" style="display:inline-block;">/</div>
+<div class="colored" id="req" style="display:inline-block;">20</div>
+</div>
+</div>
+
+<div class="colored" style="width:500px;margin: 0 auto;font-family: sans-serif;font-weight:bold;font-size:72px; width:500px; text-align:center;">
+FOLLOWERS
+</div>
+<div class="colored" style="width:500px;margin: 0 auto;font-family: sans-serif;font-weight:bold;font-size:72px; width:500px; text-align:center;">
+FOR +GAME
+</div>
+
+</div>
+
+
+
+<script>
+var bar = new ProgressBar.Circle('#container', {
+  strokeWidth: 5,
+  color: '#FFFFFF'
+});
+bar.set(0);
+var was = 0;
+function update(){
+//var url = "https://api.twitch.tv/kraken/channels/alicetalks/follows?client_id=36fqy7zrg6wccnl7gwntvuxl8ffv0h";
+var args = location.hash.substring(1).split("/");
+
+console.log(args);
+
+var streamer = args[0];
+var cnt_at_start = args[1];
+var cnt_was = args[2];
+var cnt_needed = args[3];
+
+//          #pandevich /883/0/20
+
+
+var url = "https://api.twitch.tv/kraken/channels/pandevich/follows?client_id=36fqy7zrg6wccnl7gwntvuxl8ffv0h";
+$.get( url, function( data ) {
+  //var datas = data +"";
+  var count = data._total;
+  var count_to_display = count - cnt_at_start - (-cnt_was);
+  //console.log(count);
+  $('#cnt').prop('number', was)
+  .animateNumber({ number: count_to_display });
+  
+  $('#req').html(cnt_needed);
+  
+  was = count_to_display;
+  
+  bar.animate(parseInt(count_to_display)/cnt_needed);  
+});
+}
+update();
+setInterval(update,10000);
+</script>
